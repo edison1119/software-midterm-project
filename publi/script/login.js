@@ -1,6 +1,5 @@
 //AUTH ARE COPIED FROM firebase documents
 
-import{ firebase }from "firebase/compat/app";
 const auth = firebase.auth();
 function login(){
     console.log("yes");

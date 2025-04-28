@@ -4,7 +4,6 @@
 // I THINK THIS ISN'T COUNTED RIGHT?????????
 // GAMBLING WITH SCORE :D
 
-import { firebase } from "firebase/compat/app";
 window.addEventListener('load', function () {
     document.getElementById('loginbtn').onclick = function () {
       firebase.auth().signOut();
@@ -16,8 +15,8 @@ window.addEventListener('load', function () {
       signInOptions: [
         // Comment out any lines corresponding to providers you did not check in
         // the Firebase console.
-        firebase.auth().GoogleAuthProvider.PROVIDER_ID,
-        firebase.auth().EmailAuthProvider.PROVIDER_ID,
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.EmailAuthProvider.PROVIDER_ID,
         //firebase.auth.FacebookAuthProvider.PROVIDER_ID,
         //firebase.auth.TwitterAuthProvider.PROVIDER_ID,
         //firebase.auth.GithubAuthProvider.PROVIDER_ID,
@@ -45,9 +44,7 @@ window.addEventListener('load', function () {
       } else {
         // User is signed out.
         // Initialize the FirebaseUI Widget using Firebase.
-        var ui = new firebaseui.auth.AuthUI(firebase.auth());
         // Show the Firebase login button.
-        ui.start('#firebaseui-auth-container', uiConfig);
         // Update the login state indicators.
 
         document.getElementById('login-info').innerHTML = "not logged in";
