@@ -4,7 +4,7 @@
 // I THINK THIS ISN'T COUNTED RIGHT?????????
 // GAMBLING WITH SCORE :D
 
-import{ firebase }from "firebase/compat/app";
+import { firebase } from "firebase/compat/app";
 window.addEventListener('load', function () {
     document.getElementById('loginbtn').onclick = function () {
       firebase.auth().signOut();
