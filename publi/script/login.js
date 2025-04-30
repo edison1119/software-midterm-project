@@ -1,5 +1,4 @@
 //AUTH ARE COPIED FROM firebase documents
-//TESTING
 const auth = firebase.auth();
 function login(){
     console.log("yes");
@@ -47,8 +46,12 @@ function createuser(){
             var errorCode = error.code;
             var errorMessage = error.message;
             console.log(errorMessage);
-            window.alert("auto login failed...");
-            
+            document.getElementById("login-alert").innerHTML="Something went wrong when trying auto login..."
+            document.getElementById("login-alert").classList.remove("d-none");
+            setTimeout(() => {
+                document.getElementById("login-alert").classList.add("d-none");
+            }, 3000);
+
         });
     })
     .catch((error) => {
