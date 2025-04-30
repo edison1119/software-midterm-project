@@ -1,5 +1,6 @@
 //AUTH ARE COPIED FROM firebase documents
 const auth = firebase.auth();
+const database = firebase.database();
 function login(){
     console.log("yes");
     var emailhtml = document.getElementById("email");
@@ -33,6 +34,25 @@ function createuser(){
     auth.createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
         var user = userCredential.user;
+        console.log(user,userCredential);
+        user.updateProfile({
+                "displayName": `${email}`,
+        }).then(() => {
+                // Update successful
+                // ...
+        }).catch((error) => {
+                // An error occurred
+                // ...
+        });  
+        //var newtk = database.ref("usertk/"+user.displayName).push();
+        /*
+        database.ref("users/"+user.uid+"/chatroom").set({
+            "General chatroom":1
+        }).catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorMessage);});
+        */
         window.alert("account created, automatically logging you in");
         firebase.auth().signInWithEmailAndPassword(email, password)
         .then((userCredential) => {

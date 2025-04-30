@@ -1,33 +1,14 @@
 
 
-console.log("test")
-
-
-
-
 // `load` COPIED FROM https://cloud.google.com/appengine/docs/standard/python3/building-app/authenticating-users
 // I THINK THIS ISN'T COUNTED RIGHT?????????
 // GAMBLING WITH SCORE :D
-/*
+
 window.addEventListener('load', function () {
     document.getElementById('loginbtn').onclick = function () {
       firebase.auth().signOut();
     };
   
-    // Firebas-eUI config.
-    var uiConfig = {
-      signInSuccessUrl: '/',
-      signInOptions: [
-        // Comment out any lines corresponding to providers you did not check in
-        // the Firebase console.
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        //firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-        //firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-        //firebase.auth.GithubAuthProvider.PROVIDER_ID,
-        //firebase.auth.PhoneAuthProvider.PROVIDER_ID
-      ],
-    };
     if(this.localStorage.getItem('loginsuccess')){
       document.getElementById("loginalert").classList.remove("d-none");
       setTimeout(() => {
@@ -72,4 +53,3 @@ window.addEventListener('load', function () {
     });
   });
 console.log("Hello from index.js!");
-*/
