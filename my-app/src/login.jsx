@@ -54,12 +54,8 @@ const Loginpage = ()=> {
             });  
             //var newtk = database.ref("usertk/"+user.displayName).push();
             //startcomment
-            database.ref("users/"+user.uid+"/chatroom").set({
-                "General chatroom":1
-            }).catch((error) => {
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                console.log(errorMessage);});
+            push(ref(db, "rooms/" + roomname + "/allowed"), { "mail": email })
+
             //endcomment
             window.alert("account created, automatically logging you in");
             signInWithEmailAndPassword(Auth,email, password)

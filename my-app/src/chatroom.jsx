@@ -1,38 +1,87 @@
 import './basenavbarloader.jsx';
 import { createRoot } from 'react-dom/client';
 import React, { useEffect, useState } from 'react';
-import { getDatabase, ref, get, child, onChildAdded } from "firebase/database";
+import { getDatabase, ref, get, child, onChildAdded, push, increment, update } from "firebase/database";
 import { Auth } from './firebaseinit.jsx'; // Make sure you have Auth exported from your Firebase config
 
 const db = getDatabase();
 const Chatbox = ({ roomid }) => {
   const [roomname, setRoomName] = useState('');
   const [messages, setMessages] = useState([]);
-
+  const [user, setUser] = useState(null);
   console.log("yes")
-  get(ref(db,"rooms/"+roomid+"/name")).then((snap)=>{
-    console.log("joined",snap.val());
+  useEffect(() => {
+    const unsubscribe = Auth.onAuthStateChanged((ur) => {
+      setUser(ur);
+      console.log("t", ur)
+    });
+    return () => unsubscribe();
+  }, []);
+  /*get(ref(db, "rooms/" + roomid + "/name")).then((snap) => {
+    console.log("joined", snap.val());
 
+  })*/
+  useEffect(() => {
+    setMessages([]);
+    onChildAdded(ref(db, "rooms/" + roomid + "/messages"), (snap) => {
+      console.log(`${snap.val()["sender"]} : ${snap.val()["value"]}`);
+      setMessages(prev => [...prev, `${snap.val()["sender"]} : ${snap.val()["value"]}`]);
+    });
+  }, [roomid]);
+  /*
+  onChildAdded(ref(db, "rooms/" + roomid + "/messages"), (snap) => {
+    console.log(snap.val());
+    setMessages(prev => [...prev, snap.val()]);
   })
-  onChildAdded(ref(db,"rooms/"+roomid+"/msg"),(snap)=>{
-    
-  })
-  function send(){
+  */
+  async function send() {
+    const chatRoomRef = ref(db, "rooms/" + roomid)
 
+    var content = document.getElementById("Msg").value
+    console.log("sending", user?.displayName, content)
+    await push(child(chatRoomRef, "messages"), {
+      "sender": user.displayName,
+      "value": content
+    })
+    const updates = {};
+    updates["messagecount"] = increment(1);
+    update(chatRoomRef, updates)
   }
   return (
-  <>
+    <>
+
+      <div style={{ overflowY: "auto", minHeight: 100 + "px" }} className="flex-grow-1 mb-3">
+        {messages ? (messages.map((content, index) => (
+          <p key={index}>{content}</p>
+        ))
+        ) : <p1>No message found!</p1>
+
+        }
+      </div>
 
       <div className="input-group">
-        <input type="text" id="Msg" className="form-control" placeholder="message" />
-        <button className="btn btn-primary" type="button" id="sendMsgbtn" onClick={send}>Send</button>
+        <input
+          type="text"
+          id="Msg"
+          className="form-control"
+          placeholder="Type your message"
+        />
+        <button
+          className="btn btn-primary"
+          type="button"
+          id="sendMsgbtn"
+          onClick={send}
+        >
+          Send
+        </button>
       </div>
-  </>
+
+    </>
   )
 }
 
 
-export {Chatbox}
+export { Chatbox }
 
 // Clear the existing HTML content
 //document.body.innerHTML = '<div id="app"></div>';

@@ -11,7 +11,7 @@ const db = getDatabase();
 const RoomCard = () => {
   const [user, setUser] = useState(null);
   const [rooms, setRooms] = useState([]);
-  const [currentRoom,setCurrentRoom] = useState('');
+  const [currentRoom, setCurrentRoom] = useState('');
   var procroom = [];
   useEffect(() => {
     const unsubscribe = Auth.onAuthStateChanged((user) => {
@@ -26,16 +26,16 @@ const RoomCard = () => {
 
     const fetchRooms = async () => {
       const roomsRef = ref(db, 'rooms');
-      onChildAdded(roomsRef,(snap)=>{
+      onChildAdded(roomsRef, (snap) => {
         console.log(snap.val().allowed)
-        for(var person in snap.val().allowed){
-          if(snap.val()["allowed"][person]["mail"]===user.email){
+        for (var person in snap.val().allowed) {
+          if (snap.val()["allowed"][person]["mail"] === user.email) {
             console.log(snap.val()["name"])
             setRooms(prevRooms => [...prevRooms, snap.val()["name"]]);
           }
         }
       }
-    )
+      )
 
     };
 
@@ -45,32 +45,50 @@ const RoomCard = () => {
 
   const join = async (roomid) => {
     console.log("Joining room:", roomid);
-    const chatRef = ref(db,`rooms/${roomid}`)
+    const chatRef = ref(db, `rooms/${roomid}`)
     console.log((await get(chatRef)).val())
     setCurrentRoom(roomid);
   };
 
   return (
     <>
-      {rooms.length === 0 && <p>you don't have any chatroom yet! (or it's just loading)</p>}
-      {rooms.map((room, index) => (
-        <div key={index} className="card-body d-flex justify-content-between align-items-center">
-          <div>
-            <h5 className="card-title mb-1">room : {room}</h5>
-          </div>
-          <button className="btn btn-primary" onClick={()=>{join(room)}}>Join</button>
+      <div className="col-md-5">
+        <div className="card shadow-sm mb-3" id="chatroomcard">
+          {rooms.length === 0 && <p>you don't have any chatroom yet! (or it's just loading)</p>}
+          {rooms.map((room, index) => (
+            <div key={index} className="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h5 className="card-title mb-1">room : {room}</h5>
+              </div>
+              <button className="btn btn-primary" onClick={() => { join(room) }}>Join</button>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
+      <div className="col-md-7">
+        <div id="messages" style={{minHeight: "50%"}}>
+
+        <div className="card shadow-sm mb-3" style={{ height: "auto" ,maxHeight:100+"%"}}>
+        <div className="card-body d-flex flex-column h-100">
+              <h5 className="card-title">Chat Messages</h5>
+              {currentRoom && (
+                <div className="mt-4">
+                  <Chatbox roomid={currentRoom} />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
 
-const domNode = document.getElementById('chatroomcard');
+const domNode = document.getElementById('content');
 const root = createRoot(domNode);
 root.render(<RoomCard />);
-const domNode2 = document.getElementById('messagebox');
-const root2 = createRoot(domNode2);
-root2.render(<Chatbox roomid={currentRoom}/>);
+
+
 // Clear the existing HTML content
 //document.body.innerHTML = '<div id="app"></div>';
 

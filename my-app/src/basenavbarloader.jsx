@@ -2,9 +2,9 @@
 
 
 import { createRoot } from 'react-dom/client';
-import {Auth } from "./firebaseinit"
+import { Auth } from "./firebaseinit"
 import React, { useEffect, useState } from 'react';
-import { getAuth } from "firebase/auth";
+import { getAuth, updateProfile } from "firebase/auth";
 const AuthStatus = () => {
   const [user, setUser] = useState(null);
   const [loginSuccess, setLoginSuccess] = useState(false);
@@ -42,58 +42,70 @@ const AuthStatus = () => {
       window.location.href = 'login.html';
     }
   };
+  const changename = () => {
+    updateProfile(user, { displayName:document.getElementById("newDisplayName").value})
+  }
 
   return (
     <>
 
       <div className="container-fluid">
-          <a className="navbar-brand" href="#">your (not) local chatroom</a>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
-                    <a className="nav-link active" aria-current="page" href="index.html">Lobby</a>
-                </li>
-                <li className="nav-item">
-                    <a className="nav-link active" aria-current="page" href="setting.html">Change name</a>
-                </li>
-                <li className="nav-item">
-                    <a className="nav-link" href="#">Link</a>
-                </li>
-                <li className="nav-item dropdown">
-                    <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Dropdown
-                    </a>
-                    <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a className="dropdown-item" href="#">Action</a></li>
-                    <li><a className="dropdown-item" href="#">Another action</a></li>
-                    <li><a className="dropdown-item" href="#">Something else here</a></li>
-                    </ul>
-                </li>
-                <li className="nav-item">
-                    <a className="nav-link disabled" href="#" tabIndex="-1" aria-disabled="true">Disabled</a>
-                </li>
-                </ul>
-                <b id="login-info" className="me-5">
-                {user ? `user: ${user.email}` : 'not logged in'}
-              </b>
-              <button className="btn btn-outline-primary" type="button" onClick={handleLoginClick}>
-                {user ? 'logout' : 'login'}
+        <a className="navbar-brand" href="#">your (not) local chatroom</a>
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item">
+              <a className="nav-link active" aria-current="page" href="index.html">Lobby</a>
+            </li>
+            <li className="nav-item dropdown">
+              <button
+                className="nav-link dropdown-toggle"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Change Name
               </button>
-            </div>
+              <ul className="dropdown-menu p-3" style={{ minWidth: "250px" }}>
+                <li>
+                  <input
+                    type="text"
+                    className="form-control mb-2"
+                    placeholder="New display name"
+                    id="newDisplayName"
+                  />
+                </li>
+                <li>
+                  <button
+                    className="btn btn-primary w-100"
+                    onClick={changename}
+                  >
+                    Confirm
+                  </button>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <b id="login-info" className="me-5">
+            {user ? `user: ${user.email}` : 'not logged in'}
+          </b>
+          <button className="btn btn-outline-primary" type="button" onClick={handleLoginClick}>
+            {user ? 'logout' : 'login'}
+          </button>
         </div>
-        {loginSuccess && (
+      </div>
+      {loginSuccess && (
         <div id="loginalert" className="alert alert-success alert-dismissible fade show" role="alert">
           <strong>Success!</strong> You have logged in successfully.
           <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        )}
+      )}
     </>
   );
 };
 
 const domNode = document.getElementById('topnavbar');
 const root = createRoot(domNode);
-root.render(<AuthStatus/>);
+root.render(<AuthStatus />);
