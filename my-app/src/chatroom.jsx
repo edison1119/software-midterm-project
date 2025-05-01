@@ -9,11 +9,12 @@ const Chatbox = ({ roomid }) => {
   const [roomname, setRoomName] = useState('');
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState(null);
+  const [updatev,setupdateV]=useState(0);
   console.log("yes")
   useEffect(() => {
     const unsubscribe = Auth.onAuthStateChanged((ur) => {
       setUser(ur);
-      console.log("t", ur)
+      //console.log("t", ur)
     });
     return () => unsubscribe();
   }, []);
@@ -27,7 +28,7 @@ const Chatbox = ({ roomid }) => {
       console.log(`${snap.val()["sender"]} : ${snap.val()["value"]}`);
       setMessages(prev => [...prev, `${snap.val()["sender"]} : ${snap.val()["value"]}`]);
     });
-  }, [roomid]);
+  }, [roomid,updatev]);
   /*
   onChildAdded(ref(db, "rooms/" + roomid + "/messages"), (snap) => {
     console.log(snap.val());
@@ -36,9 +37,9 @@ const Chatbox = ({ roomid }) => {
   */
   async function send() {
     const chatRoomRef = ref(db, "rooms/" + roomid)
-
+    setupdateV(updatev+1);
     var content = document.getElementById("Msg").value
-    console.log("sending", user?.displayName, content)
+    //console.log("sending", user?.displayName, content)
     await push(child(chatRoomRef, "messages"), {
       "sender": user.displayName,
       "value": content
@@ -50,7 +51,7 @@ const Chatbox = ({ roomid }) => {
   return (
     <>
 
-      <div style={{ overflowY: "auto", minHeight: 100 + "px" }} className="flex-grow-1 mb-3">
+      <div style={{ overflowY: "auto", minHeight: 100 + "px",maxHeight:"50vh" }} className="flex-grow-1 mb-3">
         {messages ? (messages.map((content, index) => (
           <p key={index}>{content}</p>
         ))

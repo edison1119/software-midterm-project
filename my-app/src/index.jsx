@@ -12,6 +12,7 @@ const RoomCard = () => {
   const [user, setUser] = useState(null);
   const [rooms, setRooms] = useState([]);
   const [currentRoom, setCurrentRoom] = useState('');
+  const [currentRoomName, setCurrentRoomName] = useState('');
   const [alert, setAlert] = useState(false);
   const [alertinner, setalertmsg] = useState('');
   var procroom = [];
@@ -29,10 +30,10 @@ const RoomCard = () => {
     const fetchRooms = async () => {
       const roomsRef = ref(db, 'rooms');
       onChildAdded(roomsRef, (snap) => {
-        console.log(snap.val().allowed)
+        //console.log(snap.val().allowed)
         for (var person in snap.val().allowed) {
           if (snap.val()["allowed"][person]["mail"] === user.email) {
-            console.log(snap.val()["name"])
+            //console.log(snap.val()["name"])
             setRooms(prevRooms => [...prevRooms, snap.val()["name"]]);
           }
         }
@@ -78,10 +79,11 @@ const RoomCard = () => {
 
   }
   const join = async (roomid) => {
-    console.log("Joining room:", roomid);
+    //console.log("Joining room:", roomid);
     const chatRef = ref(db, `rooms/${roomid}`)
-    console.log((await get(chatRef)).val())
+    //console.log((await get(chatRef)).val())
     setCurrentRoom(roomid);
+    setCurrentRoomName((await get(chatRef)).val()["name"])
   };
 
   return (
@@ -102,7 +104,7 @@ const RoomCard = () => {
             </button>
           </div>
         </div>
-      )}
+        )}
         <div className="card shadow-sm mb-3" id="chatroomcard">
           {rooms.length === 0 && <p>you don't have any chatroom yet! (or it's just loading)</p>}
           {rooms.map((room, index) => (
@@ -115,12 +117,12 @@ const RoomCard = () => {
           ))}
         </div>
       </div>
-      <div className="col-md-7">
-        <div id="messages" style={{ minHeight: "50%" }}>
+      <div className="col-md-7" >
+        <div id="messages" style={{maxHeight:"40vh"}}>
 
-          <div className="card shadow-sm mb-3" style={{ height: "auto", maxHeight: 100 + "%" }}>
+          <div className="card shadow-sm mb-3" style={{ height: "auto", maxHeight: "4ovh" }}>
             <div className="card-body d-flex flex-column h-100">
-              <h5 className="card-title">Chat Messages</h5>
+              <h5 className="card-title">{currentRoomName}</h5>
               {currentRoom && (
                 <div className="mt-4">
                   <Chatbox roomid={currentRoom} />
