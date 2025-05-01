@@ -1,76 +1,39 @@
 import './basenavbarloader.jsx';
-import './chatroom.jsx'
 import { createRoot } from 'react-dom/client';
 import React, { useEffect, useState } from 'react';
 import { getDatabase, ref, get, child, onChildAdded } from "firebase/database";
-import { Auth } from './firebaseinit'; // Make sure you have Auth exported from your Firebase config
-import { Chatbox } from './chatroom.jsx';
+import { Auth } from './firebaseinit.jsx'; // Make sure you have Auth exported from your Firebase config
 
 const db = getDatabase();
+const Chatbox = ({ roomid }) => {
+  const [roomname, setRoomName] = useState('');
+  const [messages, setMessages] = useState([]);
 
-const RoomCard = () => {
-  const [user, setUser] = useState(null);
-  const [rooms, setRooms] = useState([]);
-  const [currentRoom,setCurrentRoom] = useState('');
-  var procroom = [];
-  useEffect(() => {
-    const unsubscribe = Auth.onAuthStateChanged((user) => {
-      setUser(user);
-    });
+  console.log("yes")
+  get(ref(db,"rooms/"+roomid+"/name")).then((snap)=>{
+    console.log("joined",snap.val());
 
-    return () => unsubscribe();
-  }, []);
+  })
+  onChildAdded(ref(db,"rooms/"+roomid+"/msg"),(snap)=>{
+    
+  })
+  function send(){
 
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchRooms = async () => {
-      const roomsRef = ref(db, 'rooms');
-      onChildAdded(roomsRef,(snap)=>{
-        console.log(snap.val().allowed)
-        for(var person in snap.val().allowed){
-          if(snap.val()["allowed"][person]["mail"]===user.email){
-            console.log(snap.val()["name"])
-            setRooms(prevRooms => [...prevRooms, snap.val()["name"]]);
-          }
-        }
-      }
-    )
-
-    };
-
-    fetchRooms();
-
-  }, [user]);
-
-  const join = async (roomid) => {
-    console.log("Joining room:", roomid);
-    const chatRef = ref(db,`rooms/${roomid}`)
-    console.log((await get(chatRef)).val())
-    setCurrentRoom(roomid);
-  };
-
+  }
   return (
-    <>
-      {rooms.length === 0 && <p>you don't have any chatroom yet! (or it's just loading)</p>}
-      {rooms.map((room, index) => (
-        <div key={index} className="card-body d-flex justify-content-between align-items-center">
-          <div>
-            <h5 className="card-title mb-1">room : {room}</h5>
-          </div>
-          <button className="btn btn-primary" onClick={()=>{join(room)}}>Join</button>
-        </div>
-      ))}
-    </>
-  );
-};
+  <>
 
-const domNode = document.getElementById('chatroomcard');
-const root = createRoot(domNode);
-root.render(<RoomCard />);
-const domNode2 = document.getElementById('messagebox');
-const root2 = createRoot(domNode2);
-root2.render(<Chatbox roomid={currentRoom}/>);
+      <div className="input-group">
+        <input type="text" id="Msg" className="form-control" placeholder="message" />
+        <button className="btn btn-primary" type="button" id="sendMsgbtn" onClick={send}>Send</button>
+      </div>
+  </>
+  )
+}
+
+
+export {Chatbox}
+
 // Clear the existing HTML content
 //document.body.innerHTML = '<div id="app"></div>';
 

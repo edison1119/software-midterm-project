@@ -1,13 +1,10 @@
 
 
-// `load` COPIED FROM https://cloud.google.com/appengine/docs/standard/python3/building-app/authenticating-users
-// I THINK THIS ISN'T COUNTED RIGHT?????????
-// GAMBLING WITH SCORE :D
+
 import { createRoot } from 'react-dom/client';
-import "./firebaseinit"
+import {Auth } from "./firebaseinit"
 import React, { useEffect, useState } from 'react';
 import { getAuth } from "firebase/auth";
-const Auth = getAuth();
 const AuthStatus = () => {
   const [user, setUser] = useState(null);
   const [loginSuccess, setLoginSuccess] = useState(false);

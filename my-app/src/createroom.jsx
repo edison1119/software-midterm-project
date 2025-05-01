@@ -1,9 +1,8 @@
 import { createRoot } from 'react-dom/client';
 import "./firebaseinit"
 import React, { useEffect, useState } from 'react';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { getDatabase, ref, get, set, child, onValue, onChildAdded, orderByChild, query, equalTo, push, orderByKey, off } from "firebase/database";
-const Auth = getAuth();
 const db = getDatabase();
 console.log(4);
 import "./basenavbarloader";
