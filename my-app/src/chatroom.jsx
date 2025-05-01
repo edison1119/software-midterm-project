@@ -1,15 +1,16 @@
 import './basenavbarloader.jsx';
 import { createRoot } from 'react-dom/client';
 import React, { useEffect, useState } from 'react';
-import { getDatabase, ref, get, child, onChildAdded, push, increment, update } from "firebase/database";
+import { getDatabase, ref, get, child, onChildAdded, push, increment, update, remove } from "firebase/database";
 import { Auth } from './firebaseinit.jsx'; // Make sure you have Auth exported from your Firebase config
 
 const db = getDatabase();
 const Chatbox = ({ roomid }) => {
   const [roomname, setRoomName] = useState('');
   const [messages, setMessages] = useState([]);
+  const [messagesId, setMessagesId] = useState([]);
   const [user, setUser] = useState(null);
-  const [updatev,setupdateV]=useState(0);
+  const [updatev, setupdateV] = useState(0);
   console.log("yes")
   useEffect(() => {
     const unsubscribe = Auth.onAuthStateChanged((ur) => {
@@ -24,11 +25,13 @@ const Chatbox = ({ roomid }) => {
   })*/
   useEffect(() => {
     setMessages([]);
+    setMessagesId([]);
     onChildAdded(ref(db, "rooms/" + roomid + "/messages"), (snap) => {
       console.log(`${snap.val()["sender"]} : ${snap.val()["value"]}`);
-      setMessages(prev => [...prev, `${snap.val()["sender"]} : ${snap.val()["value"]}`]);
+      setMessages(prev => [...prev, `${snap.val()["sender"]} : ${snap.val()["value"]?snap.val()["value"]:"(no content)"}`]);
+      setMessagesId(prev => [...prev, snap.key]);
     });
-  }, [roomid,updatev]);
+  }, [roomid, updatev]);
   /*
   onChildAdded(ref(db, "rooms/" + roomid + "/messages"), (snap) => {
     console.log(snap.val());
@@ -37,7 +40,7 @@ const Chatbox = ({ roomid }) => {
   */
   async function send() {
     const chatRoomRef = ref(db, "rooms/" + roomid)
-    setupdateV(updatev+1);
+    setupdateV(updatev + 1);
     var content = document.getElementById("Msg").value
     //console.log("sending", user?.displayName, content)
     await push(child(chatRoomRef, "messages"), {
@@ -48,12 +51,24 @@ const Chatbox = ({ roomid }) => {
     updates["messagecount"] = increment(1);
     update(chatRoomRef, updates)
   }
+  function deletemsg(Id) {
+    remove(ref(db, "rooms/" + roomid + "/messages/" + Id))
+    console.log("deleting",Id)
+    setupdateV(updatev+1);
+  }
   return (
     <>
 
-      <div style={{ overflowY: "auto", minHeight: 100 + "px",maxHeight:"50vh" }} className="flex-grow-1 mb-3">
+      <div style={{ overflowY: "auto", minHeight: "10vh", maxHeight: "50vh" }} className="flex-grow-1 mb-3">
         {messages ? (messages.map((content, index) => (
-          <p key={index}>{content}</p>
+          <>
+            <div key={index} className="d-flex justify-content-between align-items-center mb-2">
+              <p className="mb-0 me-2">{content}</p>
+              <button className="btn btn-sm btn-outline-secondary btn-outline-red align-items-right" onClick={() => deletemsg(messagesId[index])}>
+                delete
+              </button>
+            </div>
+          </>
         ))
         ) : <p1>No message found!</p1>
 

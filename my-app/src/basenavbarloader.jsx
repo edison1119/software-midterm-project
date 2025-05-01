@@ -19,7 +19,7 @@ const AuthStatus = () => {
     // Listen for auth state change
     const unsubscribe = Auth.onAuthStateChanged((user) => {
       setUser(user);
-      console.log(user.email)
+      //console.log(user.email)
       if (user) {
         user.getIdToken().then((token) => {
           document.cookie = `token=${token}`;
@@ -60,7 +60,7 @@ const AuthStatus = () => {
             <li className="nav-item">
               <a className="nav-link active" aria-current="page" href="index.html">Lobby</a>
             </li>
-            <li className="nav-item dropdown">
+            {user&&<li className="nav-item dropdown">
               <button
                 className="nav-link dropdown-toggle border-0 active"
                 role="button"
@@ -88,6 +88,7 @@ const AuthStatus = () => {
                 </li>
               </ul>
             </li>
+            }
           </ul>
           <b id="login-info" className="me-5">
             {user ? `user: ${user.displayName}` : 'not logged in'}

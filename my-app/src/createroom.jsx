@@ -6,6 +6,7 @@ import { getDatabase, ref, get, set, child, onChildAdded, orderByChild, query, e
 const db = getDatabase();
 console.log(4);
 import "./basenavbarloader";
+
 const Content = () => {
     const [roomname, setRoomName] = useState('');
     const [inviteEmail, setInviteEmail] = useState('');
@@ -30,6 +31,11 @@ const Content = () => {
             })
             push(child(newroom, "allowed"), { "mail": Auth.currentUser.email })
             setRoomCreated(true);
+            setAlertGood(true)
+            setSuccessMsg("Room created!")
+            setTimeout(() => {
+                setSuccessMsg("")
+            }, 3000);
         }
         console.log("anotherone");
     }
@@ -67,6 +73,11 @@ const Content = () => {
     }
     return (
         <>
+            {successMsg && (
+                <div className={"alert text-center mx-auto mt-3 fw-bold fs-4 px-5 py-4 " + (alertgood ? "alert-success" : "alert-danger")} role="alert">
+                    {successMsg}
+                </div>
+            )}
             <div className="row mb-5">
                 <div className="col-md-5">
                     <input
@@ -118,11 +129,7 @@ const Content = () => {
                     Create the room before adding friends!
                 </p>
             )}
-            {successMsg && (
-                <div className={"alert text-center mx-auto col-md-6 " + alertgood ? "alert-success" : "alert-danger"} role="alert">
-                    {successMsg}
-                </div>
-            )}
+
         </>
     );
 
