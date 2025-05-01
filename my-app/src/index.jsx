@@ -12,6 +12,8 @@ const RoomCard = () => {
   const [user, setUser] = useState(null);
   const [rooms, setRooms] = useState([]);
   const [currentRoom, setCurrentRoom] = useState('');
+  const [alert, setAlert] = useState(false);
+  const [alertinner, setalertmsg] = useState('');
   var procroom = [];
   useEffect(() => {
     const unsubscribe = Auth.onAuthStateChanged((user) => {
@@ -42,7 +44,39 @@ const RoomCard = () => {
     fetchRooms();
 
   }, [user]);
+  function addUser() {
+    let discovering = false;
+    onChildAdded(query(ref(db, "rooms/" + roomname + "/allowed"), orderByChild("email"), equalTo(inviteEmail)), (snap) => {
+      setAlertGood(false)
+      setSuccessMsg("Hey you already added this person into the chatroom, or someone else did it!")
+      setTimeout(() => {
+        setSuccessMsg("")
+      }, 3000);
+      discovering = true;
+    })
+    if (!discovering) {
+      let inviteEmail = document.getElementById("inviteEmail")
+      push(ref(db, "rooms/" + roomname + "/allowed"), { "mail": inviteEmail }).then(() => {
+        setAlertGood(true)
+        setSuccessMsg("Added, great")
+        setTimeout(() => {
+          setSuccessMsg("")
+        }, 3000);
+      }
 
+      ).catch((e) => {
+        console.log(e);
+        setAlertGood(false)
+        setSuccessMsg("Something went wrong when adding your friend!")
+        setTimeout(() => {
+          setSuccessMsg("")
+        }, 3000);
+      }
+
+      )
+    }
+
+  }
   const join = async (roomid) => {
     console.log("Joining room:", roomid);
     const chatRef = ref(db, `rooms/${roomid}`)
@@ -52,7 +86,23 @@ const RoomCard = () => {
 
   return (
     <>
+
       <div className="col-md-5">
+        {currentRoom&&(<div className="mb-3">
+          <h5>Invite User</h5>
+          <div className="input-group">
+            <input
+              type="email"
+              className="form-control"
+              placeholder="Enter user's email"
+              id="inviteEmail"
+            />
+            <button className="btn btn-success" onClick={addUser}>
+              Invite
+            </button>
+          </div>
+        </div>
+      )}
         <div className="card shadow-sm mb-3" id="chatroomcard">
           {rooms.length === 0 && <p>you don't have any chatroom yet! (or it's just loading)</p>}
           {rooms.map((room, index) => (
@@ -66,10 +116,10 @@ const RoomCard = () => {
         </div>
       </div>
       <div className="col-md-7">
-        <div id="messages" style={{minHeight: "50%"}}>
+        <div id="messages" style={{ minHeight: "50%" }}>
 
-        <div className="card shadow-sm mb-3" style={{ height: "auto" ,maxHeight:100+"%"}}>
-        <div className="card-body d-flex flex-column h-100">
+          <div className="card shadow-sm mb-3" style={{ height: "auto", maxHeight: 100 + "%" }}>
+            <div className="card-body d-flex flex-column h-100">
               <h5 className="card-title">Chat Messages</h5>
               {currentRoom && (
                 <div className="mt-4">

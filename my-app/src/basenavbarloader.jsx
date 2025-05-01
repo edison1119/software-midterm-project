@@ -35,9 +35,10 @@ const AuthStatus = () => {
     return () => unsubscribe(); // Cleanup on unmount
   }, []);
 
-  const handleLoginClick = () => {
+  const handleLogin = () => {
     if (user) {
       Auth.signOut();
+      window.href='index.html'
     } else {
       window.location.href = 'login.html';
     }
@@ -61,10 +62,10 @@ const AuthStatus = () => {
             </li>
             <li className="nav-item dropdown">
               <button
-                className="nav-link dropdown-toggle"
+                className="nav-link dropdown-toggle border-0 active"
                 role="button"
                 data-bs-toggle="dropdown"
-                aria-expanded="false"
+                aria-expanded="false" 
               >
                 Change Name
               </button>
@@ -89,9 +90,9 @@ const AuthStatus = () => {
             </li>
           </ul>
           <b id="login-info" className="me-5">
-            {user ? `user: ${user.email}` : 'not logged in'}
+            {user ? `user: ${user.displayName}` : 'not logged in'}
           </b>
-          <button className="btn btn-outline-primary" type="button" onClick={handleLoginClick}>
+          <button className="btn btn-outline-primary" type="button" onClick={handleLogin}>
             {user ? 'logout' : 'login'}
           </button>
         </div>

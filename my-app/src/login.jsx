@@ -3,8 +3,9 @@ import { createRoot } from 'react-dom/client';
 import "./firebaseinit"
 import React, { useEffect, useState } from 'react';
 import { getAuth ,createUserWithEmailAndPassword,signInWithEmailAndPassword, updateProfile} from "firebase/auth";
-import {getDatabase,ref,get} from "firebase/database";
+import {getDatabase,ref,get,push} from "firebase/database";
 const Auth = getAuth();
+const db = getDatabase();
 const Loginpage = ()=> {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -15,8 +16,6 @@ const Loginpage = ()=> {
         console.log("yes");
         var emailhtml = document.getElementById("email");
         var passwordhtml = document.getElementById("password");
-        var email = emailhtml.value;
-        var password =  passwordhtml.value;
         signInWithEmailAndPassword(Auth, email, password)
         .then((userCredential) => {
             // Signed in
@@ -39,6 +38,7 @@ const Loginpage = ()=> {
     
     };
     function createuser(){
+        console.log("a",email,password)
         createUserWithEmailAndPassword(Auth, email, password)
         .then((userCredential) => {
             var user = userCredential.user;
@@ -54,7 +54,7 @@ const Loginpage = ()=> {
             });  
             //var newtk = database.ref("usertk/"+user.displayName).push();
             //startcomment
-            push(ref(db, "rooms/" + roomname + "/allowed"), { "mail": email })
+            push(ref(db, "rooms/Mainlobby/allowed"), { "mail": email })
 
             //endcomment
             window.alert("account created, automatically logging you in");
@@ -97,11 +97,11 @@ const Loginpage = ()=> {
         <form>
             <div className="mb-3">
                 <label htmlFor="email" className="form-label">Email</label>
-                <input type="text" className="form-control" id="email" placeholder="Enter email" required/>
+                <input type="text" className="form-control" id="email" placeholder="Enter email" onChange={(i)=>setEmail(i.target.value)}required/>
             </div>
             <div className="mb-4">
                 <label htmlFor="password" className="form-label">Password</label>
-                <input type="password" className="form-control" id="password" placeholder="Enter password" required/>
+                <input type="password" className="form-control" id="password" placeholder="Enter password" onChange={(i)=>setPassword(i.target.value)} required/>
             </div>
             <div className="d-grid gap-2">
                 <button type="button" className="btn btn-primary" onClick={login}>Login</button>
